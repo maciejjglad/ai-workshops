@@ -1,0 +1,230 @@
+{
+  "info": {
+    "name": "Weather Proxy API",
+    "description": "Test collection for Weather Proxy API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Cities",
+      "item": [
+        {
+          "name": "Search Cities - Basic",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities/search?q=London",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "London"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Cities - With Parameters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities/search?q=Paris&count=10&language=en",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Paris"
+                },
+                {
+                  "key": "count",
+                  "value": "10"
+                },
+                {
+                  "key": "language",
+                  "value": "en"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Cities - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities/search?q=NonexistentCity123",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities", "search"],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "NonexistentCity123"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Cities - Validation Error",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cities/search",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cities", "search"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Weather",
+      "item": [
+        {
+          "name": "Get Weather - London",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?lat=51.5074&lon=-0.1278",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "51.5074"
+                },
+                {
+                  "key": "lon",
+                  "value": "-0.1278"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Weather - Extended Forecast",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?lat=40.7128&lon=-74.0060&days=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "40.7128"
+                },
+                {
+                  "key": "lon",
+                  "value": "-74.0060"
+                },
+                {
+                  "key": "days",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Weather - Invalid Coordinates",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather?lat=999&lon=999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "999"
+                },
+                {
+                  "key": "lon",
+                  "value": "999"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Weather - Missing Parameters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-correlation-id",
+                "value": "{{$guid}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/weather",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "weather"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:7071",
+      "type": "string"
+    }
+  ]
+}
