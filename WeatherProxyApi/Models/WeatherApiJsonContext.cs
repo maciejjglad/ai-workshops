@@ -9,9 +9,7 @@ namespace WeatherProxyApi.Models;
 [JsonSourceGenerationOptions(
     WriteIndented = false,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-    AllowTrailingCommas = true,
-    ReadCommentHandling = JsonCommentHandling.Skip)]
+    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
 [JsonSerializable(typeof(CitySearchRequest))]
 [JsonSerializable(typeof(CitySearchResponse))]
 [JsonSerializable(typeof(CityResult))]

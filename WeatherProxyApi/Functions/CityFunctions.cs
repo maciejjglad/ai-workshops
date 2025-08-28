@@ -3,7 +3,11 @@ using System.Net;
 using FluentValidation;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using WeatherProxyApi.Models.Requests;
 using WeatherProxyApi.Models.Responses;
 using WeatherProxyApi.Models.Errors;
@@ -28,12 +32,21 @@ public class CityFunctions
     }
 
     [Function("SearchCities")]
+    [OpenApiOperation(operationId: "SearchCities", tags: new[] { "Cities" }, Summary = "Search for cities", Description = "Search for cities by name with optional filtering parameters")]
+    [OpenApiParameter(name: "q", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "City name to search for")]
+    [OpenApiParameter(name: "count", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Maximum number of cities to return (default: 5, max: 50)")]
+    [OpenApiParameter(name: "language", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Language code for localized city names (default: en)")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(CitySearchResponse), Description = "Successfully found cities matching the search criteria")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Invalid request parameters")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.NotFound, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "No cities found matching the search criteria")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadGateway, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "External service unavailable")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Internal server error")]
     public async Task<HttpResponseData> SearchCities(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "api/cities/search")]
         HttpRequestData req,
         CancellationToken cancellationToken)
     {
-        var correlationId = req.Headers.GetValues("x-correlation-id").FirstOrDefault() 
+        var correlationId = req.Headers.TryGetValues("x-correlation-id", out var values) ? values.FirstOrDefault() : null
             ?? Guid.NewGuid().ToString();
 
         using var activity = Activity.Current?.Source.StartActivity("SearchCities");

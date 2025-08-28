@@ -37,39 +37,7 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.Add("User-Agent", "WeatherProxy/1.0");
             client.Timeout = TimeSpan.FromSeconds(6); // Overall timeout
         })
-        .AddStandardResilienceHandler(options =>
-        {
-            // Timeout Policy
-            options.TotalRequestTimeout = new HttpTimeoutStrategyOptions
-            {
-                Timeout = TimeSpan.FromSeconds(4)
-            };
-
-            // Retry Policy  
-            options.Retry = new HttpRetryStrategyOptions
-            {
-                MaxRetryAttempts = 3,
-                Delay = TimeSpan.FromMilliseconds(500),
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
-                ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
-                    .Handle<HttpRequestException>()
-                    .Handle<TaskCanceledException>()
-                    .HandleResult(response => 
-                        response.StatusCode >= HttpStatusCode.InternalServerError ||
-                        response.StatusCode == HttpStatusCode.RequestTimeout ||
-                        response.StatusCode == HttpStatusCode.TooManyRequests)
-            };
-
-            // Circuit Breaker
-            options.CircuitBreaker = new HttpCircuitBreakerStrategyOptions
-            {
-                FailureRatio = 0.5,
-                SamplingDuration = TimeSpan.FromSeconds(30),
-                MinimumThroughput = 5,
-                BreakDuration = TimeSpan.FromSeconds(15)
-            };
-        });
+        .AddStandardResilienceHandler();
 
         // Forecast API client with resilience (longer timeout for weather data)
         services.AddHttpClient("OpenMeteoForecast", client =>
@@ -78,39 +46,7 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.Add("User-Agent", "WeatherProxy/1.0");
             client.Timeout = TimeSpan.FromSeconds(8); // Longer for weather data
         })
-        .AddStandardResilienceHandler(options =>
-        {
-            // Timeout Policy (longer for weather data)
-            options.TotalRequestTimeout = new HttpTimeoutStrategyOptions
-            {
-                Timeout = TimeSpan.FromSeconds(6)
-            };
-
-            // Retry Policy (same as geocoding)
-            options.Retry = new HttpRetryStrategyOptions
-            {
-                MaxRetryAttempts = 3,
-                Delay = TimeSpan.FromMilliseconds(500),
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
-                ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
-                    .Handle<HttpRequestException>()
-                    .Handle<TaskCanceledException>()
-                    .HandleResult(response => 
-                        response.StatusCode >= HttpStatusCode.InternalServerError ||
-                        response.StatusCode == HttpStatusCode.RequestTimeout ||
-                        response.StatusCode == HttpStatusCode.TooManyRequests)
-            };
-
-            // Circuit Breaker (same as geocoding)
-            options.CircuitBreaker = new HttpCircuitBreakerStrategyOptions
-            {
-                FailureRatio = 0.5,
-                SamplingDuration = TimeSpan.FromSeconds(30),
-                MinimumThroughput = 5,
-                BreakDuration = TimeSpan.FromSeconds(15)
-            };
-        });
+        .AddStandardResilienceHandler();
 
         return services;
     }

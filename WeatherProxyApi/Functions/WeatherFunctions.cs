@@ -3,8 +3,13 @@ using System.Net;
 using FluentValidation;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using WeatherProxyApi.Models.Requests;
+using WeatherProxyApi.Models.Responses;
 using WeatherProxyApi.Models.Errors;
 using WeatherProxyApi.Services;
 
@@ -27,12 +32,20 @@ public class WeatherFunctions
     }
 
     [Function("GetWeather")]
+    [OpenApiOperation(operationId: "GetWeather", tags: new[] { "Weather" }, Summary = "Get weather forecast", Description = "Get weather forecast for specified coordinates")]
+    [OpenApiParameter(name: "lat", In = ParameterLocation.Query, Required = true, Type = typeof(double), Description = "Latitude coordinate (-90 to 90)")]
+    [OpenApiParameter(name: "lon", In = ParameterLocation.Query, Required = true, Type = typeof(double), Description = "Longitude coordinate (-180 to 180)")]
+    [OpenApiParameter(name: "days", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Number of forecast days (default: 5, max: 16)")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(WeatherResponse), Description = "Successfully retrieved weather forecast")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Invalid coordinates or parameters")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadGateway, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Weather service unavailable")]
+    [OpenApiResponseWithBody(statusCode: HttpStatusCode.InternalServerError, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Internal server error")]
     public async Task<HttpResponseData> GetWeather(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "api/weather")]
         HttpRequestData req,
         CancellationToken cancellationToken)
     {
-        var correlationId = req.Headers.GetValues("x-correlation-id").FirstOrDefault() 
+        var correlationId = req.Headers.TryGetValues("x-correlation-id", out var values) ? values.FirstOrDefault() : null
             ?? Guid.NewGuid().ToString();
 
         using var activity = Activity.Current?.Source.StartActivity("GetWeather");

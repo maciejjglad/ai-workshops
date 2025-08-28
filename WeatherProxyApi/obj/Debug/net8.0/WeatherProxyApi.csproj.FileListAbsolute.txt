@@ -1,0 +1,6 @@
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.csproj.AssemblyReference.cache
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.GeneratedMSBuildEditorConfig.editorconfig
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.AssemblyInfoInputs.cache
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.AssemblyInfo.cs
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.csproj.CoreCompileInputs.cache
+/Users/maciej.gladysz/ai-workshops/WeatherProxyApi/obj/Debug/net8.0/WeatherProxyApi.sourcelink.json

@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
 using Serilog;
 using WeatherProxyApi.Extensions;
-using WeatherProxyApi.OpenApi;
 
 // Configure Serilog
 Log.Logger = new LoggerConfiguration()
