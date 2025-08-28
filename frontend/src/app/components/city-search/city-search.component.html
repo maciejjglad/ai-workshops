@@ -1,0 +1,103 @@
+<div class="city-search-container">
+  <mat-form-field class="search-field" appearance="outline">
+    <mat-label>{{dynamicLabel}}</mat-label>
+    
+    <input 
+      matInput 
+      [formControl]="searchControl"
+      [matAutocomplete]="auto"
+      [placeholder]="placeholder"
+      aria-label="Search for a city"
+      aria-describedby="search-hint"
+      role="combobox"
+      [attr.aria-expanded]="showSuggestions"
+      [attr.aria-activedescendant]="selectedIndex >= 0 ? 'option-' + selectedIndex : null"
+      aria-autocomplete="list"
+      autocomplete="off"
+      (keydown)="onKeyDown($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()">
+    
+    <!-- Search icon -->
+    <mat-icon matPrefix class="search-icon" aria-hidden="true">search</mat-icon>
+    
+    <!-- Loading spinner -->
+    <mat-spinner 
+      *ngIf="isLoading" 
+      matSuffix 
+      diameter="20" 
+      aria-label="Searching for cities">
+    </mat-spinner>
+    
+    <!-- Clear button -->
+    <button 
+      *ngIf="searchControl.value && !isLoading" 
+      matSuffix 
+      type="button"
+      aria-label="Clear search"
+      class="clear-button"
+      (click)="clearSearch()">
+      <mat-icon>clear</mat-icon>
+    </button>
+    
+    <!-- Hint text -->
+    <mat-hint id="search-hint" [class.error-hint]="hasError">
+      {{getHintText()}}
+    </mat-hint>
+    
+    <!-- Error display -->
+    <mat-error *ngIf="hasError">
+      {{error}}
+    </mat-error>
+  </mat-form-field>
+  
+  <!-- Autocomplete panel -->
+  <mat-autocomplete 
+    #auto="matAutocomplete"
+    [displayWith]="displayCity"
+    (optionSelected)="onOptionSelected($event)"
+    role="listbox"
+    aria-label="City suggestions"
+    class="city-autocomplete"
+    autoActiveFirstOption="false">
+    
+    <!-- No results message -->
+    <div 
+      *ngIf="searchResults && searchResults.length === 0 && searchControl.value && searchControl.value.length >= 2 && !isLoading"
+      class="no-results"
+      role="option"
+      aria-disabled="true">
+      <mat-icon class="no-results-icon">location_off</mat-icon>
+      <div class="no-results-text">
+        <strong>No cities found</strong>
+        <span>Try checking your spelling or using a different search term</span>
+      </div>
+    </div>
+    
+    <!-- City options -->
+    <mat-option 
+      *ngFor="let city of searchResults; let i = index; trackBy: trackByCity" 
+      [value]="city"
+      [id]="'option-' + i"
+      role="option"
+      [attr.aria-label]="getCityAriaLabel(city)"
+      [attr.aria-selected]="i === selectedIndex"
+      [class.selected]="i === selectedIndex"
+      (onSelectionChange)="$event.isUserInput && onCitySelected(city)">
+      
+      <div class="city-option">
+        <div class="city-main">
+          <span class="city-name">{{city.name}}</span>
+          <span class="city-country">{{city.country}}</span>
+        </div>
+        
+        <div class="city-details" *ngIf="city.region || city.population">
+          <span *ngIf="city.region" class="city-region">{{city.region}}</span>
+          <span *ngIf="city.population" class="city-population">
+            {{city.population | number}} people
+          </span>
+        </div>
+      </div>
+    </mat-option>
+  </mat-autocomplete>
+</div>

@@ -1,0 +1,146 @@
+<div class="weather-panel" [attr.data-testid]="'weather-panel'">
+  
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-skeleton" [attr.data-testid]="'weather-loading'">
+    <mat-card class="skeleton-current">
+      <mat-card-content>
+        <div class="loading-header">
+          <mat-spinner diameter="20" aria-label="Loading weather data"></mat-spinner>
+          <span class="loading-text">Loading weather data...</span>
+        </div>
+        
+        <div class="skeleton-content">
+          <div class="skeleton-line skeleton-title"></div>
+          <div class="skeleton-line skeleton-temp"></div>
+          <div class="skeleton-line skeleton-details"></div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+    <div class="skeleton-forecast">
+      <div class="skeleton-forecast-title"></div>
+      <div class="skeleton-cards">
+        <div class="skeleton-card" *ngFor="let item of [1,2,3,4,5]">
+          <div class="skeleton-line skeleton-day"></div>
+          <div class="skeleton-circle skeleton-icon"></div>
+          <div class="skeleton-line skeleton-temp-range"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError" class="error-state" [attr.data-testid]="'weather-error'">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon" color="warn" aria-hidden="true">warning</mat-icon>
+          <div class="error-text">
+            <h3>Weather data unavailable</h3>
+            <p>{{error}}</p>
+          </div>
+        </div>
+        
+        <div class="error-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="onRefreshWeather()"
+            [disabled]="isLoading"
+            aria-label="Retry loading weather data">
+            <mat-icon>refresh</mat-icon>
+            Try Again
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Weather Content -->
+  <div *ngIf="hasData" class="weather-content">
+    
+    <!-- Current Weather Section -->
+    <section class="current-weather" [attr.data-testid]="'current-weather'">
+      <mat-card class="current-weather-card">
+        <mat-card-content>
+          <div class="current-header">
+            <div class="location-info">
+              <h2 class="location-name">{{currentWeatherView!.location}}</h2>
+              <p class="local-time">{{currentWeatherView!.localTime}}</p>
+              <p class="last-updated" *ngIf="lastUpdated">{{getLastUpdatedText()}}</p>
+            </div>
+          </div>
+          
+          <div 
+            class="current-details"
+            [attr.aria-label]="getCurrentWeatherAriaLabel()"
+            role="region"
+            aria-labelledby="current-weather-heading">
+            
+            <div class="temperature-display">
+              <span 
+                class="temp-value" 
+                [attr.aria-label]="'Current temperature ' + currentWeatherView!.temperature">
+                {{currentWeatherView!.temperature}}
+              </span>
+              
+              <img 
+                [src]="getWeatherIconUrl(currentWeatherView!.icon)" 
+                [alt]="currentWeatherView!.condition"
+                class="weather-icon"
+                width="64"
+                height="64"
+                loading="lazy">
+            </div>
+            
+            <div class="weather-info">
+              <div class="condition">{{currentWeatherView!.condition}}</div>
+              <div class="wind" [attr.aria-label]="'Wind speed ' + currentWeatherView!.windSpeed">
+                <mat-icon class="info-icon" aria-hidden="true">air</mat-icon>
+                Wind: {{currentWeatherView!.windSpeed}}
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </section>
+
+    <!-- Daily Forecast Section -->
+    <section class="daily-forecast" [attr.data-testid]="'daily-forecast'">
+      <div class="forecast-header">
+        <h3 id="forecast-heading">{{forecastDays}}-Day Forecast</h3>
+      </div>
+      
+      <div 
+        class="forecast-grid"
+        role="region"
+        aria-labelledby="forecast-heading"
+        [attr.aria-label]="forecastDays + ' day weather forecast'">
+        
+        <app-weather-card
+          *ngFor="let day of dailyForecastViews; trackBy: trackByDate"
+          [dayData]="day"
+          [temperatureUnit]="temperatureUnit"
+          [compact]="false"
+          (cardClicked)="onWeatherCardClick($event)"
+          (cardFocused)="onWeatherCardFocus($event)">
+        </app-weather-card>
+      </div>
+    </section>
+  </div>
+
+  <!-- Empty State (when no city selected) -->
+  <div *ngIf="showEmptyState" class="empty-state">
+    <mat-card class="empty-card">
+      <mat-card-content>
+        <div class="empty-content">
+          <mat-icon class="empty-icon" aria-hidden="true">location_searching</mat-icon>
+          <div class="empty-text">
+            <h3>Welcome to Weather App</h3>
+            <p>Search for a city above to see the current weather and 5-day forecast.</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

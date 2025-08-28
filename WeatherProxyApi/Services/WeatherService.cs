@@ -87,9 +87,17 @@ public class WeatherService : IWeatherService
                 throw new InvalidOperationException("Received null response from weather service");
             }
 
-            // Attempt to get location name from reverse geocoding (optional enhancement)
-            var (cityName, countryName) = await TryGetLocationNameAsync(
-                request.Lat, request.Lon, cancellationToken);
+            // Use provided city/country names if available, otherwise try reverse geocoding
+            var cityName = request.CityName;
+            var countryName = request.CountryName;
+            
+            if (string.IsNullOrWhiteSpace(cityName) || string.IsNullOrWhiteSpace(countryName))
+            {
+                var (reverseCityName, reverseCountryName) = await TryGetLocationNameAsync(
+                    request.Lat, request.Lon, cancellationToken);
+                cityName ??= reverseCityName;
+                countryName ??= reverseCountryName;
+            }
 
             var weather = WeatherMapper.MapToPublicDto(response, cityName, countryName);
 

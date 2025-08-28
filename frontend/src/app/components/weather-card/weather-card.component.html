@@ -1,0 +1,58 @@
+<mat-card 
+  class="weather-card"
+  [class.compact]="compact"
+  [class.selected]="selected"
+  tabindex="0"
+  role="button"
+  [attr.aria-label]="getCardAriaLabel()"
+  [attr.aria-describedby]="cardId + '-details'"
+  [attr.data-testid]="'weather-card'"
+  (click)="onCardClick()"
+  (keydown)="onKeyDown($event)"
+  (focus)="onCardFocus()">
+  
+  <mat-card-content class="card-content">
+    <div class="day-name" role="heading" aria-level="3">
+      {{dayData.dayName}}
+      <span class="sr-only">{{dayData.date}}</span>
+    </div>
+    
+    <img 
+      class="weather-icon"
+      [src]="getWeatherIconUrl(dayData.icon)"
+      [alt]="dayData.condition"
+      loading="lazy"
+      width="48"
+      height="48">
+    
+    <div class="temperature-range">
+      <span class="temp-max" [attr.aria-label]="'High temperature ' + dayData.temperatureMax">
+        {{dayData.temperatureMax}}
+      </span>
+      <span class="temp-separator" aria-hidden="true">/</span>
+      <span class="temp-min" [attr.aria-label]="'Low temperature ' + dayData.temperatureMin">
+        {{dayData.temperatureMin}}
+      </span>
+    </div>
+    
+    <div class="weather-details" [id]="cardId + '-details'">
+      <span 
+        class="precipitation" 
+        [attr.aria-label]="'Precipitation chance ' + dayData.precipitationChance"
+        title="Precipitation chance">
+        <mat-icon class="detail-icon" aria-hidden="true">grain</mat-icon>
+        <span class="detail-value">{{dayData.precipitationChance}}</span>
+      </span>
+      
+      <span 
+        class="wind" 
+        [attr.aria-label]="'Wind speed ' + dayData.windSpeed"
+        title="Wind speed">
+        <mat-icon class="detail-icon" aria-hidden="true">air</mat-icon>
+        <span class="detail-value">{{dayData.windSpeed}}</span>
+      </span>
+      
+      <span class="condition sr-only">{{dayData.condition}}</span>
+    </div>
+  </mat-card-content>
+</mat-card>

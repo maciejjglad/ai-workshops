@@ -1,0 +1,145 @@
+// App Component Styles
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #ffffff;
+  color: #212121;
+}
+
+// Header Styles
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  .app-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    
+    .title-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 500;
+      
+      @media (max-width: 600px) {
+        font-size: 1.125rem;
+      }
+    }
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    .unit-toggle {
+      .unit-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        min-width: 20px;
+        display: block;
+      }
+    }
+  }
+}
+
+// Main Content
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+// Search Section
+.search-section {
+  .search-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    
+    app-city-search {
+      width: 100%;
+      max-width: 400px;
+    }
+    
+    .search-instructions {
+      text-align: center;
+      color: #666;
+      font-size: 0.875rem;
+      margin-top: 0.5rem;
+      
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
+
+// Weather Section
+.weather-section {
+  flex: 1;
+  
+  &.has-content {
+    min-height: 500px;
+  }
+  
+  app-weather-panel {
+    display: block;
+    width: 100%;
+  }
+}
+
+// Screen reader only content
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .app-content {
+    padding: 1rem 0.5rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-content {
+    padding: 0.75rem 0.25rem;
+    gap: 1rem;
+  }
+}
+

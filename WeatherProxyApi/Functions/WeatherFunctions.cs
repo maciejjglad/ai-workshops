@@ -36,6 +36,8 @@ public class WeatherFunctions
     [OpenApiParameter(name: "lat", In = ParameterLocation.Query, Required = true, Type = typeof(double), Description = "Latitude coordinate (-90 to 90)")]
     [OpenApiParameter(name: "lon", In = ParameterLocation.Query, Required = true, Type = typeof(double), Description = "Longitude coordinate (-180 to 180)")]
     [OpenApiParameter(name: "days", In = ParameterLocation.Query, Required = false, Type = typeof(int), Description = "Number of forecast days (default: 5, max: 16)")]
+    [OpenApiParameter(name: "cityName", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Optional city name for better location display")]
+    [OpenApiParameter(name: "countryName", In = ParameterLocation.Query, Required = false, Type = typeof(string), Description = "Optional country name for better location display")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(WeatherResponse), Description = "Successfully retrieved weather forecast")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadRequest, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Invalid coordinates or parameters")]
     [OpenApiResponseWithBody(statusCode: HttpStatusCode.BadGateway, contentType: "application/problem+json", bodyType: typeof(ApiProblemDetails), Description = "Weather service unavailable")]
@@ -61,7 +63,9 @@ public class WeatherFunctions
             {
                 Lat = double.TryParse(queryCollection["lat"], out var lat) ? lat : 0,
                 Lon = double.TryParse(queryCollection["lon"], out var lon) ? lon : 0,
-                Days = int.TryParse(queryCollection["days"], out var days) ? days : 5
+                Days = int.TryParse(queryCollection["days"], out var days) ? days : 5,
+                CityName = queryCollection["cityName"],
+                CountryName = queryCollection["countryName"]
             };
 
             _logger.LogInformation("Weather forecast requested {Latitude} {Longitude} {Days} {CorrelationId}",
